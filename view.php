@@ -10,7 +10,7 @@
 <html lang="en">
     <head>
         <meta charset="utf-8" />
-        <title><?php echo $project_status->title() ;?></title>
+        <title><?php echo $project_status->h1_title() ;?></title>
 
         <link rel="stylesheet" href="style.css" /> 
         <link rel="author" href="http://voltampmedia.com" />
@@ -44,29 +44,27 @@
     <a id="click_to_login" href="?action=logout">click here to logout</a>
     <?php } ?>
 
-    <h1>Skor Project Status</h1>
+    <h1 id="h1title"><?php echo $project_status->h1_title(); ?></h1>
     <h3>Last updated: <?php echo $project_status->last_updated() ;?></h3>
 
     <div id="gradient">
         <ul class="projects">
 
-            <?php foreach($project_status->get_all_projects() as $group) { ?>
+            <?php foreach($project_status->get_all_projects() as $gid => $group) { ?>
             <li>
-                <h2><?php echo $group->group_title;?></h2>
+                <h2 class="grouptitle" id="group_id_<?php echo $gid; ?>"><?php echo $group->group_title;?></h2>
             <li>
             
             <?php foreach($group->projects as $project) { ?>
             <li class="individual_project" id="project_id_<?php echo $project->id; ?>">
                 <p class="title"><?php echo $project->title;?></p>
-                <?php if(!is_null($project->link)) { ?>
+                <?php /*if(!is_null($project->link)) { ?>
                     <a class="extlink" href="<?php echo $project->link->url;?>"><?php echo $project->link->text; ?></a>
-                <?php } ?>
+                <?php } */?>
                 <div class="status">
                     <span class="percent p<?php echo $project->complete; ?>"><?php echo $project->complete; ?>%</span>
                 </div>
-                <p class="notes">
-                    <?php echo $project->notes; ?>
-                </p>
+                <p class="notes"><?php echo $project->notes; ?></p>
             </li>
             <?php } } ?>
         </ul>
@@ -91,18 +89,169 @@
                 $("#login").slideToggle();
             })
 
-            $(".message").click(function () {
-                if($(this).attr('id') != 'inner_message') {
-                    $(this).slideUp('slow');
-                }
-            });
+            $(document).on('click', '.message', (function () {
+                $(this).slideUp('slow');
+            }));
 
-            /****** Updating Group Title   ******/
-            $(document).on('click', '.title', (function () {
+            <?php if($project_status->loggedin()) { ?>
+            /****** Updating Project Completion ******/
+
+            $(document).on('click', '.percent', (function () {
+                var classes = $(this).attr('class');
+                if($(this).is('span')) {
+                    $(this).replaceWith($('<textarea class="' + classes + '">' + this.innerHTML + '</textarea>'));
+                } 
+            }));
+
+            $(document).on('change', '.percent', (function () {
+                var id = $(this).parent().parent().attr('id').replace('project_id_','');
+                var ids = id.split('_');
+                var gid = ids[0];
+                var pid = ids[1];
+
+                var post_data = 'gid='+gid+'&pid='+pid+'&percent='+$(this).val();
+
+                $.ajax({
+                    type: 'POST',
+                    url: '?action=update_percent',
+                    data: post_data,
+                    dataType: "json",
+                    success: function (data, textStatus, jqXHR) {
+                        if(data.response) {
+                            $("#msg_container").append("<div class=\"message success-msg\"><h5>Success:</h5>" + data.data + "</div>");
+                        } else {
+                            $("#msg_container").append("<div class=\"message error-msg\"><h5>Error:</h5>" + data.data + "</div>");
+                        }
+                    }
+                });
+            }));
+
+            $(document).on('blur', '.percent', (function () {
+                $(this).removeClass('p0 p10 p20 p30 p40 p50 p60 p70 p80 p90 p100');
+                var classes = $(this).attr('class');
+                if($(this).is('textarea')) {
+                    var percent_raw = $(this).val().replace('%','');
+                    var percent = Math.round(percent_raw/10)*10;
+                    classes = classes + ' p' + percent;
+                    $(this).replaceWith($('<span class="' + classes +'">' + percent + '%</span>'));
+                }
+            }));
+
+            /****** 
+                        Updating  H! Title   
+            ******/
+            $(document).on('click', '#h1title', (function () {
+                var id = $(this).attr('id');
+                if($(this).is('h1')) {
+                    $(this).replaceWith($('<textarea id="' + id + '">' + this.innerHTML + '</textarea>'));
+                } 
+            }));
+
+            $(document).on('change', '#h1title', (function () {
+               
+                var post_data = 'h1title='+$(this).val();
+
+                $.ajax({
+                    type: 'POST',
+                    url: '?action=update_h1title',
+                    data: post_data,
+                    dataType: "json",
+                    success: function (data, textStatus, jqXHR) {
+                        console.log(data);
+                        if(data.response) {
+                            $("#msg_container").append("<div class=\"message success-msg\"><h5>Success:</h5>" + data.data + "</div>");
+                        } else {
+                            $("#msg_container").append("<div class=\"message error-msg\"><h5>Error:</h5>" + data.data + "</div>");
+                        }
+                    }
+                });
+            }));
+
+            $(document).on('blur', '#h1title', (function () {
+                var id = $(this).attr('id');
+                if($(this).is('textarea')) {
+                    $(this).replaceWith($('<h1 id="' + id + '">' + $(this).val() + '</h1>'));
+                }
+            }));
+
+            /****** 
+                        Updating Group Title   
+            ******/
+            $(document).on('click', '.grouptitle', (function () {
+                var classes = $(this).attr('class');
+                var id = $(this).attr('id');
+                if($(this).is('h2')) {
+                    $(this).replaceWith($('<textarea id="' + id + '" class="' + classes + '">' + this.innerHTML + '</textarea>'));
+                } 
+            }));
+
+            $(document).on('change', '.grouptitle', (function () {
+                var gid = $(this).attr('id').replace('group_id_','');
+               
+                var post_data = 'gid='+gid+'&title='+$(this).val();
+
+                $.ajax({
+                    type: 'POST',
+                    url: '?action=update_group_title',
+                    data: post_data,
+                    dataType: "json",
+                    success: function (data, textStatus, jqXHR) {
+                        console.log(data);
+                        if(data.response) {
+                            $("#msg_container").append("<div class=\"message success-msg\"><h5>Success:</h5>" + data.data + "</div>");
+                        } else {
+                            $("#msg_container").append("<div class=\"message error-msg\"><h5>Error:</h5>" + data.data + "</div>");
+                        }
+                    }
+                });
+            }));
+
+            $(document).on('blur', '.grouptitle', (function () {
+                var classes = $(this).attr('class');
+                var id = $(this).attr('id');
+                if($(this).is('textarea')) {
+                    $(this).replaceWith($('<h2 id="' + id + '" class="' + classes +'">' + $(this).val() + '</h2>'));
+                }
+            }));
+
+
+            /****** Updating Project Notes ******/
+            $(document).on('click', '.notes', (function () {
                 var classes = $(this).attr('class');
                 if($(this).is('p')) {
                     $(this).replaceWith($('<textarea class="' + classes + '">' + this.innerHTML + '</textarea>'));
                 } 
+            }));
+
+            $(document).on('change', '.notes', (function () {
+                var id = $(this).parent().attr('id').replace('project_id_','');
+                var ids = id.split('_');
+                var gid = ids[0];
+                var pid = ids[1];
+
+                var post_data = 'gid='+gid+'&pid='+pid+'&notes='+$(this).val();
+
+                $.ajax({
+                    type: 'POST',
+                    url: '?action=update_notes',
+                    data: post_data,
+                    dataType: "json",
+                    success: function (data, textStatus, jqXHR) {
+                        console.log(data);
+                        if(data.response) {
+                            $("#msg_container").append("<div class=\"message success-msg\"><h5>Success:</h5>" + data.data + "</div>");
+                        } else {
+                            $("#msg_container").append("<div class=\"message error-msg\"><h5>Error:</h5>" + data.data + "</div>");
+                        }
+                    }
+                });
+            }));
+
+            $(document).on('blur', '.notes', (function () {
+                var classes = $(this).attr('class');
+                if($(this).is('textarea')) {
+                    $(this).replaceWith($('<p class="' + classes +'">' + $(this).val() + '</p>'));
+                }
             }));
 
             /****** Updating Project Title ******/
@@ -120,24 +269,20 @@
                 var pid = ids[1];
 
                 var post_data = 'gid='+gid+'&pid='+pid+'&title='+$(this).val();
-                //var post_data = 'gid='+gid+'&pid='+pid;
 
                 $.ajax({
                     type: 'POST',
                     url: '?action=update_title',
                     data: post_data,
-                    statusCode: {
-                        404: function() {
-                          alert("page not found");
+                    dataType: "json",
+                    success: function (data, textStatus, jqXHR) {
+                        console.log(data);
+                        if(data.response) {
+                            $("#msg_container").append("<div class=\"message success-msg\"><h5>Success:</h5>" + data.data + "</div>");
+                        } else {
+                            $("#msg_container").append("<div class=\"message error-msg\"><h5>Error:</h5>" + data.data + "</div>");
                         }
-                    },
-                    error: function(jqXHR, textStatus, errorThrown) {
-                        alert(errorThrown);
-                      //  console.log('[textStatus: '+textStatus+']', '[errorThrown: '+errorThrown+']');
-                    }/*,
-                    success: function(data, textStatus, jqXHR) {
-                        alert(data);
-                    }*/
+                    }
                 });
             }));
 
@@ -147,6 +292,9 @@
                     $(this).replaceWith($('<p class="' + classes +'">' + $(this).val() + '</p>'));
                 }
             }));
+
+            <?php } ?>
+
         });
     </script>
 

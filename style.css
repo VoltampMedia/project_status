@@ -15,12 +15,37 @@ h1 {
 	letter-spacing: -1px; 
 	font-size: 35px;
 }
+
+textarea#h1title {
+	display: block;
+    font-size: 35px;
+    padding: 5px;
+    margin: 100px auto 0;
+    text-align: center;
+    width: 600px;
+    height: 45px;
+    font-family: 'helvetica-neue','helvetica neue',helvetica,arial,sans-serif;
+}
+
 h3 { 
 	padding-bottom: 40px; 
 	color: #333; 
 	text-align: center; 
 	font-weight: 200;
 	font-size: 18px;
+}
+
+h2.grouptitle {
+	font-size:22px;
+}
+textarea.grouptitle {
+	color: #666666;
+    float: left;
+	font-size:22px;
+    font-weight: normal;
+    height: 22px;
+    padding: 5px;
+    width: 75%;
 }
 
 a, a:visited {color: #4173ab;}
@@ -81,8 +106,21 @@ textarea.title {
     padding: 5px;
     width: 75%;
 }
+
 .extlink {float: right; text-align: right; padding-right: 30px; background: url(link.png) no-repeat right center; height: 20px;}
-.notes { padding: 10px 0; color: #555;font-size: 12px;}
+.notes { 
+	padding: 10px 0; 
+	color: #555;
+	font-size: 12px;
+}
+
+textarea.notes {
+	margin: 5px;
+	color: #333;
+	width: 500px;
+	height: 200px;
+	padding: 10px;
+}
 
 
 
@@ -94,14 +132,14 @@ textarea.title {
 	background: #ccc;
 	border: 1px solid #b7b7b7}
 
-.status span {
+.status span, .status textarea {
 	display: block;
 	padding: 14px; 
 	height: 22px;
-	text-align: right;
+	text-align: center;
 	font-weight: bold;
 	font-size: 20px;
-	line-height: 25px; 
+	line-height: 22px; 
 	}
 
 #project_template {

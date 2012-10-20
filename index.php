@@ -53,6 +53,15 @@ class project_status
                     $this->logout();
                     $this->redirect();
                     break;
+                case 'update_title':
+                case 'update_group_title': 
+                case 'update_notes':
+                case 'update_h1title':
+                case 'update_percent':
+                    break;
+                default:
+                    $this->gen_json(array('response' => false, 'data' => 'invalid action.'));
+
             }
         }
 
@@ -63,11 +72,64 @@ class project_status
                         $this->update_title();
                         return;
                         break;
+                    case 'update_group_title': 
+                        $this->update_group_title();
+                        return;
+                        break;
+                    case 'update_notes':
+                        $this->update_notes();
+                        return;
+                        break;
+                    case 'update_h1title':
+                        $this->update_h1title();
+                        return;
+                        break;
+                    case 'update_percent':
+                        $this->update_percent();
+                        return;
+                        break;
                 }
             }
         }
     }
 
+
+
+    public function update_h1title()
+    {
+        if(!array_key_exists('h1title', $_POST))  {
+            $this->gen_json(array('response' => false, 'data' => 'H1 title must be posted.'));
+            return;
+        }
+
+        $this->h1_title($_POST['h1title'])->write_storage();
+        $this->gen_json(array('response' => true, 'data' => 'h1 title was saved.'));
+    }
+
+    public function update_group_title()
+    {
+        if(!array_key_exists('gid',$_POST) || 
+           !array_key_exists('title', $_POST))  {
+            $this->gen_json(array('response' => false, 'data' => 'gid and title must be posted.'));
+            return;
+        }
+
+        $all_projects = $this->get_all_projects();
+
+        if(!array_key_exists($_POST['gid'],$all_projects)) {
+            $this->gen_json(array('response' => false, 'data' => 'gid not found.'));
+            return;
+        }
+
+        $group = $all_projects[$_POST['gid']];
+
+        $group->group_title = $_POST['title'];
+
+        $this->set_all_projects($all_projects)->write_storage();
+        
+
+        $this->gen_json(array('response' => true, 'data' => 'project groups title was saved.'));
+    }
 
     public function update_title()
     {
@@ -96,22 +158,87 @@ class project_status
         $this->set_all_projects($all_projects)->write_storage();
         
 
-        $this->gen_json(array('response' => true, 'data' => 'title was saved.'));
+        $this->gen_json(array('response' => true, 'data' => 'project title was saved.'));
+    }
+
+    public function update_percent()
+    {
+        if(!array_key_exists('gid',$_POST) || 
+           !array_key_exists('pid', $_POST) || 
+           !array_key_exists('percent', $_POST))  {
+            $this->gen_json(array('response' => false, 'data' => 'gid, pid, and percent must be posted.'));
+            return;
+        }
+
+        $all_projects = $this->get_all_projects();
+
+        if(!array_key_exists($_POST['gid'],$all_projects)) {
+            $this->gen_json(array('response' => false, 'data' => 'gid not found.'));
+            return;
+        }
+
+        $group = $all_projects[$_POST['gid']];
+        if(!array_key_exists($_POST['pid'],$group->projects)){
+            $this->gen_json(array('response' => false, 'data' => 'pid not found.'));
+            return;
+        }
+
+        $precent_raw = preg_replace('/[^0-9]/','',$_POST['percent']);
+        $precent = round($precent_raw / 10) * 10;
+
+        $group->projects[$_POST['pid']]->complete = (string) $precent;
+
+        $this->set_all_projects($all_projects)->write_storage();
+        
+
+        $this->gen_json(array('response' => true, 'data' => 'project precentage was saved.'));
+    }
+
+    public function update_notes()
+    {
+        if(!array_key_exists('gid',$_POST) || 
+           !array_key_exists('pid', $_POST) || 
+           !array_key_exists('notes', $_POST))  {
+            $this->gen_json(array('response' => false, 'data' => 'gid, pid, and notes must be posted.'));
+            return;
+        }
+
+        $all_projects = $this->get_all_projects();
+
+        if(!array_key_exists($_POST['gid'],$all_projects)) {
+            $this->gen_json(array('response' => false, 'data' => 'gid not found.'));
+            return;
+        }
+
+        $group = $all_projects[$_POST['gid']];
+        if(!array_key_exists($_POST['pid'],$group->projects)){
+            $this->gen_json(array('response' => false, 'data' => 'pid not found.'));
+            return;
+        }
+
+        $group->projects[$_POST['pid']]->notes = $_POST['notes'];
+
+        $this->set_all_projects($all_projects)->write_storage();
+        
+
+        $this->gen_json(array('response' => true, 'data' => 'project notes was saved.'));
     }
     
     private function gen_json($data)
     {
-        if(!$data['response']) {
+        
+
+        /*if($data['response']) {
             header("HTTP/1.0 400 " + $data['data']);
             header("Content-Type: text/javascript; charset=utf-8");
             echo json_encode($data['data']);
             exit;
-        } else {
+        } else {*/
             header("HTTP/1.0 200 OK");
             header("Content-Type: text/javascript; charset=utf-8");
-            echo json_encode($data['data']);
+            echo json_encode($data);
             exit;
-        }
+        //}
     }
 
     public function login()
@@ -193,12 +320,12 @@ class project_status
         }
     }
 
-    public function title($title = null)
+    public function h1_title($h1 = null)
     {
-        if(is_null($title)) {
-            return $this->storage->title;
+        if(is_null($h1)) {
+            return $this->storage->h1;
         } else {
-            $this->storage->title = $title;
+            $this->storage->h1 = $h1;
             return $this;
         }
     }
