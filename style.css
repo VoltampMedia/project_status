@@ -1,0 +1,76 @@
+* {margin: 0; padding: 0;}
+
+body {
+	margin: 100px 50px;
+	background: #eee url(grid.png) repeat;
+	color: #111;
+	font-family: 'helvetica-neue', 'helvetica neue', helvetica, arial, sans-serif;
+	}
+	
+h1 { padding: 0 0 10px; color: #333;text-align: center; letter-spacing: -1px; font-size: 35px;}
+h3 { padding-bottom: 40px; color: #333; text-align: center; font-weight: 200;font-size: 18px;}
+
+a, a:visited {color: #4173ab;}
+a:hover {background: #ccc;}
+
+#gradient {display: none;}
+
+
+.projects {list-style: none; text-align: left;}
+.projects li {margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid #ccc}
+
+	
+.title { padding: 0 0 10px; font-weight: 200;font-size: 19px; width: 75%; float: left;}
+.extlink {float: right; text-align: right; padding-right: 30px; background: url(link.png) no-repeat right center; height: 20px;}
+.notes { padding: 10px 0; color: #555;font-size: 12px;}
+
+
+
+
+.status {
+	width: 100%; 
+	clear: both;
+	height: 50px; 
+	background: #ccc;
+	border: 1px solid #b7b7b7}
+
+.status span {
+	display: block;
+	padding: 14px; 
+	height: 22px;
+	text-align: right;
+	font-weight: bold;
+	font-size: 20px;
+	line-height: 25px; 
+	}
+
+#project_template {
+	display: none;
+}
+
+.p0   {width:   1%; background: #ccc;}
+.p10  {width:  10%; background: #b00000; }
+.p20  {width:  20%; background: #b00000; }
+.p30  {width:  30%; background: #b00000; }
+.p40  {width:  40%; background: #d0d000; }
+.p50  {width:  50%; background: #d0d000; }
+.p60  {width:  60%; background: #d0d000; }
+.p70  {width:  70%; background: #d0d000; }
+.p80  {width:  80%; background: #008000; }
+.p90  {width:  90%; background: #008000; }
+.p100 {width:  97%; background: #00a000; }
+	
+#footer {
+	width: 70%;
+	margin: 20px auto;
+	border-top: 1px solid #ddd;
+	color: #888;
+	text-align: center;
+}
+#footer #voltampmedia {
+	float: left;
+}
+
+#footer #twitter {
+	float: right;
+}
