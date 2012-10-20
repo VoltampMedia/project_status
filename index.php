@@ -58,6 +58,8 @@ class project_status
                 case 'update_notes':
                 case 'update_h1title':
                 case 'update_percent':
+                case 'add_project':
+                case 'remove_project':
                     break;
                 default:
                     $this->gen_json(array('response' => false, 'data' => 'invalid action.'));
@@ -88,11 +90,82 @@ class project_status
                         $this->update_percent();
                         return;
                         break;
+                    case 'add_project':
+                        $this->add_project();
+                        $this->redirect();
+                        break;
+                    case 'remove_project':
+                        $this->remove_project();
+                        $this->redirect();
+                        break;
                 }
             }
         }
     }
 
+    public function remove_project()
+    {
+        if(!array_key_exists('gpid',$_GET)) {
+            $this->gen_json(array('response' => false, 'data' => 'title, notes, group, percent must be posted.'));
+        } 
+
+        $gpids = explode('_',$_GET['gpid']);
+        $gid = $gpids[0];
+        $pid = $gpids[1];
+
+        $all_projects = $this->get_all_projects();
+
+        if(!array_key_exists($gid,$all_projects)) {
+            $this->gen_json(array('response' => false, 'data' => 'gid not found.'));
+            return;
+        }
+
+        $group = $all_projects[$gid];
+        if(!array_key_exists($pid,$group->projects)){
+            $this->gen_json(array('response' => false, 'data' => 'pid not found.'));
+            return;
+        }
+
+        unset($group->projects[$pid]);
+        $this->set_all_projects($all_projects)->write_storage();
+        $this->add_flash_msg('info','the project was successfullly removed.');
+
+    }
+
+
+    public function add_project()
+    {
+        if(!array_key_exists('title',$_POST) || 
+           !array_key_exists('notes', $_POST) || 
+           !array_key_exists('group', $_POST)|| 
+           !array_key_exists('percent', $_POST))  {
+            $this->gen_json(array('response' => false, 'data' => 'title, notes, group, percent must be posted.'));
+            return;
+        }
+
+
+        $all_projects = $this->get_all_projects();
+
+        if(!array_key_exists($_POST['group'],$all_projects)) {
+            $this->gen_json(array('response' => false, 'data' => 'gid not found.'));
+            return;
+        }
+
+        $group = $all_projects[$_POST['group']];
+        
+        $obj = array();
+
+        $obj['title']    = $_POST['title'];
+        $obj['notes']    = $_POST['notes'];
+        $obj['complete'] = $_POST['percent'];
+        $obj['link ']    = null;
+
+        $group->projects[] = $obj;
+
+        $this->set_all_projects($all_projects)->write_storage();
+        $this->add_flash_msg('success','project was added.');
+
+    }
 
 
     public function update_h1title()
@@ -305,6 +378,7 @@ class project_status
     {
         $storage = $this->storage();
         $storage->last_updated = date('m/d/Y h:i:s T');
+
         $string = json_encode($storage);
         file_put_contents('storage.json',$string);
         return;
@@ -362,6 +436,10 @@ class project_status
     }
 }
 
+$username = '';
+$title = '';
+$notes = '';
+$percent = '';
 
 $project_status = new project_status;
 

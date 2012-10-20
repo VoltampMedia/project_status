@@ -50,6 +50,34 @@
     <div id="gradient">
         <ul class="projects">
 
+            <span class="addProject">add another project</span>
+            <form id="addProject" method="post" action="?action=add_project">
+                <label for="Title">Title</label><input type="text" name="title" value="<?php echo $title; ?>" />
+                <label for="notes">Notes</label><input type="text" name="notes" class="addProjectNotes" value="<?php echo $notes; ?>" />
+                <label for="percent">Completed</label>
+                <select class="addProjectPercent" name="percent">
+                    <option value="0">0%</option>
+                    <option value="10">10%</option>
+                    <option value="20">20%</option>
+                    <option value="30">30%</option>
+                    <option value="40">40%</option>
+                    <option value="50">50%</option>
+                    <option value="60">60%</option>
+                    <option value="70">70%</option>
+                    <option value="80">80%</option>
+                    <option value="90">90%</option>
+                    <option value="100">100%</option>
+                </select>
+                <select name="group">
+                    <?php foreach($project_status->get_all_projects() as $gid => $group) { ?>
+                        <option value="<?php echo $gid;?>"><?php echo $group->group_title; ?></option>
+                    <?php } ?>
+                </select>
+            <input type="submit" id="addProjectSubmit" value="Add Project" />
+            </form>
+
+            <div id="formspacer"></div>
+
             <?php foreach($project_status->get_all_projects() as $gid => $group) { ?>
             <li>
                 <h2 class="grouptitle" id="group_id_<?php echo $gid; ?>"><?php echo $group->group_title;?></h2>
@@ -58,6 +86,7 @@
             <?php foreach($group->projects as $project) { ?>
             <li class="individual_project" id="project_id_<?php echo $project->id; ?>">
                 <p class="title"><?php echo $project->title;?></p>
+                <a class="removeproject" href="?action=remove_project&gpid=<?php echo $project->id; ?>">remove project</a>
                 <?php /*if(!is_null($project->link)) { ?>
                     <a class="extlink" href="<?php echo $project->link->url;?>"><?php echo $project->link->text; ?></a>
                 <?php } */?>
@@ -70,15 +99,6 @@
         </ul>
     </div>
 
-    <div id="project_template">
-        <li>
-            <p class="title"></p>
-            <a class="extlink" href=""></a>
-            <div class="status"><span></span></div>
-            <p class="notes"></p>
-        </li>
-    </div>
-
     <script type='text/javascript' src='http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js'></script>
 
     <script type="text/javascript">
@@ -88,6 +108,11 @@
             $("#click_to_login").click(function () {
                 $("#login").slideToggle();
             })
+
+            $(".addProject").click(function () {
+                $("#addProject").slideToggle();
+            })
+
 
             $(document).on('click', '.message', (function () {
                 $(this).slideUp('slow');
