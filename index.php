@@ -33,12 +33,16 @@ class project_status
 
 
         $json = file_get_contents('storage.json');
-        $this->storage(json_decode($json));
-        foreach($this->get_all_projects() as $gid => $group) {
-            foreach($group->projects as $key => $project){
-                $group->projects[$key]->id = $gid . '_' . $key;
+        $this->storage(json_decode($json,true));
+
+        $all_projects = $this->get_all_projects();
+        foreach($all_projects as $gid => $group) {
+            foreach($group['projects'] as $key => $project){
+                $all_projects[$gid]['projects'][$key]['id'] = $gid . '_' . $key;
             }
         }
+
+        $this->set_all_projects($all_projects);
 
         /**
          *  actions not requiring to be logged in
@@ -120,13 +124,12 @@ class project_status
             return;
         }
 
-        $group = $all_projects[$gid];
-        if(!array_key_exists($pid,$group->projects)){
+        if(!array_key_exists($pid,$all_projects[$gid]['projects'])){
             $this->gen_json(array('response' => false, 'data' => 'pid not found.'));
             return;
         }
 
-        unset($group->projects[$pid]);
+        unset($all_projects[$gid]['projects'][$pid]);
         $this->set_all_projects($all_projects)->write_storage();
         $this->add_flash_msg('info','the project was successfullly removed.');
 
@@ -150,8 +153,6 @@ class project_status
             $this->gen_json(array('response' => false, 'data' => 'gid not found.'));
             return;
         }
-
-        $group = $all_projects[$_POST['group']];
         
         $obj = array();
 
@@ -160,11 +161,10 @@ class project_status
         $obj['complete'] = $_POST['percent'];
         $obj['link ']    = null;
 
-        $group->projects[] = $obj;
+        $all_projects[$_POST['group']]['projects'][] = $obj;
 
         $this->set_all_projects($all_projects)->write_storage();
         $this->add_flash_msg('success','project was added.');
-
     }
 
 
@@ -194,13 +194,10 @@ class project_status
             return;
         }
 
-        $group = $all_projects[$_POST['gid']];
-
-        $group->group_title = $_POST['title'];
+        $all_projects[$_POST['gid']]['group_title'] = $_POST['title'];
 
         $this->set_all_projects($all_projects)->write_storage();
         
-
         $this->gen_json(array('response' => true, 'data' => 'project groups title was saved.'));
     }
 
@@ -221,12 +218,12 @@ class project_status
         }
 
         $group = $all_projects[$_POST['gid']];
-        if(!array_key_exists($_POST['pid'],$group->projects)){
+        if(!array_key_exists($_POST['pid'],$group['projects'])){
             $this->gen_json(array('response' => false, 'data' => 'pid not found.'));
             return;
         }
 
-        $group->projects[$_POST['pid']]->title = $_POST['title'];
+        $all_projects[$_POST['gid']]['projects'][$_POST['pid']]['title'] = $_POST['title'];
 
         $this->set_all_projects($all_projects)->write_storage();
         
@@ -250,16 +247,15 @@ class project_status
             return;
         }
 
-        $group = $all_projects[$_POST['gid']];
-        if(!array_key_exists($_POST['pid'],$group->projects)){
+        if(!array_key_exists($_POST['pid'],$all_projects[$_POST['gid']]['projects'])){
             $this->gen_json(array('response' => false, 'data' => 'pid not found.'));
             return;
         }
 
-        $precent_raw = preg_replace('/[^0-9]/','',$_POST['percent']);
-        $precent = round($precent_raw / 10) * 10;
+        $percent_raw = preg_replace('/[^0-9]/','',$_POST['percent']);
+        $percent = round($percent_raw / 10) * 10;
 
-        $group->projects[$_POST['pid']]->complete = (string) $precent;
+        $all_projects[$_POST['gid']]['projects'][$_POST['pid']]['complete'] = (string) $percent;
 
         $this->set_all_projects($all_projects)->write_storage();
         
@@ -283,16 +279,14 @@ class project_status
             return;
         }
 
-        $group = $all_projects[$_POST['gid']];
-        if(!array_key_exists($_POST['pid'],$group->projects)){
+        if(!array_key_exists($_POST['pid'],$all_projects[$_POST['gid']]['projects'])){
             $this->gen_json(array('response' => false, 'data' => 'pid not found.'));
             return;
         }
 
-        $group->projects[$_POST['pid']]->notes = $_POST['notes'];
+        $all_projects[$_POST['gid']]['projects'][$_POST['pid']]['notes'] = $_POST['notes'];
 
         $this->set_all_projects($all_projects)->write_storage();
-        
 
         $this->gen_json(array('response' => true, 'data' => 'project notes was saved.'));
     }
@@ -377,7 +371,7 @@ class project_status
     public function write_storage()
     {
         $storage = $this->storage();
-        $storage->last_updated = date('m/d/Y h:i:s T');
+        $storage['last_updated'] = date('m/d/Y h:i:s T');
 
         $string = json_encode($storage);
         file_put_contents('storage.json',$string);
@@ -397,9 +391,9 @@ class project_status
     public function h1_title($h1 = null)
     {
         if(is_null($h1)) {
-            return $this->storage->h1;
+            return $this->storage['h1'];
         } else {
-            $this->storage->h1 = $h1;
+            $this->storage['h1'] = $h1;
             return $this;
         }
     }
@@ -407,9 +401,9 @@ class project_status
     public function last_updated($date = null)
     {
         if(is_null($date)){
-            return $this->storage->last_updated;
+            return $this->storage['last_updated'];
         } else {
-            $this->storage->last_updated;
+            $this->storage['last_updated'] = $date;
             return $this;
         }
     }
@@ -426,12 +420,12 @@ class project_status
 
     public function get_all_projects()
     {
-        return $this->storage->projects;
+        return $this->storage['projects'];
     }
 
     public function set_all_projects($projects)
     {
-        $this->storage->projects = $projects;
+        $this->storage['projects'] = $projects;
         return $this;
     }
 }
@@ -443,4 +437,4 @@ $percent = '';
 
 $project_status = new project_status;
 
-include('view.php');
+require('view.php');

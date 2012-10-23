@@ -70,7 +70,7 @@
                 </select>
                 <select name="group">
                     <?php foreach($project_status->get_all_projects() as $gid => $group) { ?>
-                        <option value="<?php echo $gid;?>"><?php echo $group->group_title; ?></option>
+                        <option value="<?php echo $gid;?>"><?php echo $group['group_title']; ?></option>
                     <?php } ?>
                 </select>
             <input type="submit" id="addProjectSubmit" value="Add Project" />
@@ -80,20 +80,20 @@
 
             <?php foreach($project_status->get_all_projects() as $gid => $group) { ?>
             <li>
-                <h2 class="grouptitle" id="group_id_<?php echo $gid; ?>"><?php echo $group->group_title;?></h2>
+                <h2 class="grouptitle" id="group_id_<?php echo $gid; ?>"><?php echo $group['group_title'];?></h2>
             <li>
             
-            <?php foreach($group->projects as $project) { ?>
-            <li class="individual_project" id="project_id_<?php echo $project->id; ?>">
-                <p class="title"><?php echo $project->title;?></p>
-                <a class="removeproject" href="?action=remove_project&gpid=<?php echo $project->id; ?>">remove project</a>
+            <?php foreach($group['projects'] as $project) { ?>
+            <li class="individual_project" id="project_id_<?php echo $project['id']; ?>">
+                <p class="title"><?php echo $project['title'];?></p>
+                <a class="removeproject" href="?action=remove_project&gpid=<?php echo $project['id']; ?>">remove project</a>
                 <?php /*if(!is_null($project->link)) { ?>
                     <a class="extlink" href="<?php echo $project->link->url;?>"><?php echo $project->link->text; ?></a>
                 <?php } */?>
                 <div class="status">
-                    <span class="percent p<?php echo $project->complete; ?>"><?php echo $project->complete; ?>%</span>
+                    <span class="percent p<?php echo $project['complete']; ?>"><?php echo $project['complete']; ?>%</span>
                 </div>
-                <p class="notes"><?php echo $project->notes; ?></p>
+                <p class="notes"><?php echo $project['notes']; ?></p>
             </li>
             <?php } } ?>
         </ul>
