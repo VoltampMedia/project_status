@@ -143,7 +143,7 @@
                     dataType: "json",
                     success: function (data, textStatus, jqXHR) {
                         if(data.response) {
-                            $("#msg_container").append("<div class=\"message success-msg\"><h5>Success:</h5>" + data.data + "</div>");
+                            $("#msg_container").append("<div class=\"message success-msg\"><h5>Success:</h5>" + data.data + "</div>").delay(10000).slideUp('slow');
                         } else {
                             $("#msg_container").append("<div class=\"message error-msg\"><h5>Error:</h5>" + data.data + "</div>");
                         }
@@ -184,7 +184,7 @@
                     success: function (data, textStatus, jqXHR) {
                         console.log(data);
                         if(data.response) {
-                            $("#msg_container").append("<div class=\"message success-msg\"><h5>Success:</h5>" + data.data + "</div>");
+                            $("#msg_container").append("<div class=\"message success-msg\"><h5>Success:</h5>" + data.data + "</div>").delay(10000).slideUp('slow');;
                         } else {
                             $("#msg_container").append("<div class=\"message error-msg\"><h5>Error:</h5>" + data.data + "</div>");
                         }
@@ -223,7 +223,7 @@
                     success: function (data, textStatus, jqXHR) {
                         console.log(data);
                         if(data.response) {
-                            $("#msg_container").append("<div class=\"message success-msg\"><h5>Success:</h5>" + data.data + "</div>");
+                            $("#msg_container").append("<div class=\"message success-msg\"><h5>Success:</h5>" + data.data + "</div>").delay(10000).slideUp('slow');;
                         } else {
                             $("#msg_container").append("<div class=\"message error-msg\"><h5>Error:</h5>" + data.data + "</div>");
                         }
@@ -264,7 +264,7 @@
                     success: function (data, textStatus, jqXHR) {
                         console.log(data);
                         if(data.response) {
-                            $("#msg_container").append("<div class=\"message success-msg\"><h5>Success:</h5>" + data.data + "</div>");
+                            $("#msg_container").append("<div class=\"message success-msg\"><h5>Success:</h5>" + data.data + "</div>").delay(10000).slideUp('slow');;
                         } else {
                             $("#msg_container").append("<div class=\"message error-msg\"><h5>Error:</h5>" + data.data + "</div>");
                         }
@@ -303,7 +303,7 @@
                     success: function (data, textStatus, jqXHR) {
                         console.log(data);
                         if(data.response) {
-                            $("#msg_container").append("<div class=\"message success-msg\"><h5>Success:</h5>" + data.data + "</div>");
+                            $("#msg_container").append("<div class=\"message success-msg\"><h5>Success:</h5>" + data.data + "</div>").delay(10000).slideUp('slow');;
                         } else {
                             $("#msg_container").append("<div class=\"message error-msg\"><h5>Error:</h5>" + data.data + "</div>");
                         }
