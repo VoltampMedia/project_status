@@ -50,9 +50,16 @@
     <div id="gradient">
         <ul class="projects">
 
+            <?php if($project_status->loggedin()) { ?>
+            <span class="addGroup">add another group</span>
+            <form id="addGroup" method="post" action="?action=add_group">
+                <label for="group">Group</label><input type="text" name="group" value="<?php echo $group; ?>" />
+            <input type="submit" id="addGroupSubmit" value="Add Group" />
+            </form>
+            <br />
             <span class="addProject">add another project</span>
             <form id="addProject" method="post" action="?action=add_project">
-                <label for="Title">Title</label><input type="text" name="title" value="<?php echo $title; ?>" />
+                <label for="title">Title</label><input type="text" name="title" value="<?php echo $title; ?>" />
                 <label for="notes">Notes</label><input type="text" name="notes" class="addProjectNotes" value="<?php echo $notes; ?>" />
                 <label for="percent">Completed</label>
                 <select class="addProjectPercent" name="percent">
@@ -76,6 +83,7 @@
             <input type="submit" id="addProjectSubmit" value="Add Project" />
             </form>
 
+            <?php } ?>
             <div id="formspacer"></div>
 
             <?php foreach($project_status->get_all_projects() as $gid => $group) { ?>
@@ -113,10 +121,16 @@
                 $("#addProject").slideToggle();
             })
 
+            $(".addGroup").click(function () {
+                $("#addGroup").slideToggle();
+            })
 
             $(document).on('click', '.message', (function () {
                 $(this).slideUp('slow');
             }));
+
+            $('.success-msg').delay(10000).slideUp('slow');
+            $('.info-msg').delay(10000).slideUp('slow');
 
             <?php if($project_status->loggedin()) { ?>
             /****** Updating Project Completion ******/
@@ -124,7 +138,9 @@
             $(document).on('click', '.percent', (function () {
                 var classes = $(this).attr('class');
                 if($(this).is('span')) {
-                    $(this).replaceWith($('<textarea class="' + classes + '">' + this.innerHTML + '</textarea>'));
+                    var textarea = $('<textarea class="' + classes + '">' + this.innerHTML + '</textarea>');
+                    $(this).replaceWith(textarea);
+                    textarea.trigger('focus');
                 } 
             }));
 
@@ -168,7 +184,9 @@
             $(document).on('click', '#h1title', (function () {
                 var id = $(this).attr('id');
                 if($(this).is('h1')) {
-                    $(this).replaceWith($('<textarea id="' + id + '">' + this.innerHTML + '</textarea>'));
+                    var textarea = $('<textarea id="' + id + '">' + this.innerHTML + '</textarea>');
+                    $(this).replaceWith(textarea);
+                    textarea.trigger('focus');
                 } 
             }));
 
@@ -206,7 +224,9 @@
                 var classes = $(this).attr('class');
                 var id = $(this).attr('id');
                 if($(this).is('h2')) {
-                    $(this).replaceWith($('<textarea id="' + id + '" class="' + classes + '">' + this.innerHTML + '</textarea>'));
+                    var textarea = $('<textarea id="' + id + '" class="' + classes + '">' + this.innerHTML + '</textarea>');
+                    $(this).replaceWith(textarea);
+                    textarea.trigger('focus');
                 } 
             }));
 
@@ -244,7 +264,9 @@
             $(document).on('click', '.notes', (function () {
                 var classes = $(this).attr('class');
                 if($(this).is('p')) {
-                    $(this).replaceWith($('<textarea class="' + classes + '">' + this.innerHTML + '</textarea>'));
+                    var textarea = $('<textarea class="' + classes + '">' + this.innerHTML + '</textarea>');
+                    $(this).replaceWith(textarea);
+                    textarea.trigger('focus');
                 } 
             }));
 
@@ -283,7 +305,9 @@
             $(document).on('click', '.title', (function () {
                 var classes = $(this).attr('class');
                 if($(this).is('p')) {
-                    $(this).replaceWith($('<textarea class="' + classes + '">' + this.innerHTML + '</textarea>'));
+                    var textarea = $('<textarea class="' + classes + '">' + this.innerHTML + '</textarea>');
+                    $(this).replaceWith(textarea);
+                    textarea.trigger('focus');
                 } 
             }));
 
@@ -303,7 +327,7 @@
                     success: function (data, textStatus, jqXHR) {
                         console.log(data);
                         if(data.response) {
-                            $("#msg_container").append("<div class=\"message success-msg\"><h5>Success:</h5>" + data.data + "</div>").delay(10000).slideUp('slow');;
+                            $("#msg_container").append("<div class=\"message success-msg\"><h5>Success:</h5>" + data.data + "</div>").delay(10000).slideUp('slow');
                         } else {
                             $("#msg_container").append("<div class=\"message error-msg\"><h5>Error:</h5>" + data.data + "</div>");
                         }

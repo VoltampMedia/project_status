@@ -64,6 +64,7 @@ class project_status
                 case 'update_percent':
                 case 'add_project':
                 case 'remove_project':
+                case 'add_group':
                     break;
                 default:
                     $this->gen_json(array('response' => false, 'data' => 'invalid action.'));
@@ -102,6 +103,10 @@ class project_status
                         $this->remove_project();
                         $this->redirect();
                         break;
+                    case 'add_group':
+                        $this->add_group();
+                        $this->redirect();
+                        break;
                 }
             }
         }
@@ -135,6 +140,23 @@ class project_status
 
     }
 
+
+    public function add_group()
+    {
+        if(!array_key_exists('group',$_POST))  {
+            $this->gen_json(array('response' => false, 'data' => 'group must be posted.'));
+            return;
+        }
+
+        $all_projects = $this->get_all_projects();
+
+        $obj = array('group_title' => $_POST['group'], 'projects' => array());
+
+        $all_projects[] = $obj;
+
+        $this->set_all_projects($all_projects)->write_storage();
+        $this->add_flash_msg('success','group was added.');
+    }
 
     public function add_project()
     {
@@ -429,7 +451,7 @@ class project_status
         return $this;
     }
 }
-
+$group = '';
 $username = '';
 $title = '';
 $notes = '';
