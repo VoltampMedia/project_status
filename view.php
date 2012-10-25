@@ -89,12 +89,18 @@
             <?php foreach($project_status->get_all_projects() as $gid => $group) { ?>
             
             <h2 class="grouptitle" id="group_id_<?php echo $gid; ?>"><?php echo $group['group_title'];?></h2>
-            <a class="removegroup" href="?action=remove_group&gid=<?php echo $gid; ?>">remove group</a>
             
+            <?php if($project_status->loggedin()) { ?>
+            <a class="removegroup" href="?action=remove_group&gid=<?php echo $gid; ?>">remove group</a>
+            <?php } ?>
+
             <?php foreach($group['projects'] as $project) { ?>
             <li class="individual_project" id="project_id_<?php echo $project['id']; ?>">
                 <p class="title"><?php echo $project['title'];?></p>
+
+                <?php if($project_status->loggedin()) { ?>
                 <a class="removeproject" href="?action=remove_project&gpid=<?php echo $project['id']; ?>">remove project</a>
+                <?php } ?>
                 <?php /*if(!is_null($project->link)) { ?>
                     <a class="extlink" href="<?php echo $project->link->url;?>"><?php echo $project->link->text; ?></a>
                 <?php } */?>
