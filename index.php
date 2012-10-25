@@ -65,6 +65,7 @@ class project_status
                 case 'add_project':
                 case 'remove_project':
                 case 'add_group':
+                case 'remove_group':
                     break;
                 default:
                     $this->gen_json(array('response' => false, 'data' => 'invalid action.'));
@@ -107,9 +108,33 @@ class project_status
                         $this->add_group();
                         $this->redirect();
                         break;
+                    case 'remove_group':
+                        $this->remove_group();
+                        $this->redirect();
+                        break;
                 }
             }
         }
+    }
+
+    public function remove_group()
+    {
+        if(!array_key_exists('gid',$_GET)) {
+            $this->gen_json(array('response' => false, 'data' => 'group must be posted.'));
+        } 
+
+        $gid = $_GET['gid'];
+
+        $all_projects = $this->get_all_projects();
+
+        if(!array_key_exists($gid,$all_projects)) {
+            $this->gen_json(array('response' => false, 'data' => 'gid not found.'));
+            return;
+        }
+
+        unset($all_projects[$gid]);
+        $this->set_all_projects($all_projects)->write_storage();
+        $this->add_flash_msg('info','the group was successfullly removed.');
     }
 
     public function remove_project()
@@ -137,7 +162,6 @@ class project_status
         unset($all_projects[$gid]['projects'][$pid]);
         $this->set_all_projects($all_projects)->write_storage();
         $this->add_flash_msg('info','the project was successfullly removed.');
-
     }
 
 
@@ -149,6 +173,11 @@ class project_status
         }
 
         $all_projects = $this->get_all_projects();
+
+        if(strlen($_POST['group']) < 1) {
+            $this->add_flash_msg('error','you must enter a title for that group.');
+            return;
+        }
 
         $obj = array('group_title' => $_POST['group'], 'projects' => array());
 

@@ -87,9 +87,9 @@
             <div id="formspacer"></div>
 
             <?php foreach($project_status->get_all_projects() as $gid => $group) { ?>
-            <li>
-                <h2 class="grouptitle" id="group_id_<?php echo $gid; ?>"><?php echo $group['group_title'];?></h2>
-            <li>
+            
+            <h2 class="grouptitle" id="group_id_<?php echo $gid; ?>"><?php echo $group['group_title'];?></h2>
+            <a class="removegroup" href="?action=remove_group&gid=<?php echo $gid; ?>">remove group</a>
             
             <?php foreach($group['projects'] as $project) { ?>
             <li class="individual_project" id="project_id_<?php echo $project['id']; ?>">

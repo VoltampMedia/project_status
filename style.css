@@ -49,7 +49,7 @@ textarea.grouptitle {
 }
 
 a, a:visited {color: #4173ab;}
-a:hover {background: #ccc;}
+a:hover {font-weight: bold}
 
 #gradient {display: none;}
 
@@ -141,6 +141,10 @@ textarea.title {
     height: 15px;
     padding: 5px;
     width: 75%;
+}
+
+a.removeproject, a.removegroup {
+	color: #BE4741;
 }
 
 a.removeproject {
@@ -244,7 +248,7 @@ textarea.notes {
 	background: -webkit-gradient(linear, left top, left bottom, from(#E1F2FC), to(#CAE9FD)); /* for webkit browsers */
 	background: -moz-linear-gradient(top,  #E1F2FC 12%,  #CAE9FD 81%); /* for firefox 3.6+ */
 	background: -ms-linear-gradient(top,  #E1F2FC 12%,  #CAE9FD 81%); /* for ie10 */
-	background: linear-gradient(top,  #E1F2FC 12%,  #CAE9FD 81%); /* for standards */
+	background: linear-gradient(to top,  #E1F2FC 12%,  #CAE9FD 81%); /* for standards */
 
     border: 1px solid #CADCEA;
     color: #225B86;
@@ -255,7 +259,7 @@ textarea.notes {
 	background: -webkit-gradient(linear, left top, left bottom, from(#FAE2E2), to(#F2CACB)); /* for webkit browsers */
 	background: -moz-linear-gradient(top,  #FAE2E2 12%,  #F2CACB 81%); /* for firefox 3.6+ */
 	background: -ms-linear-gradient(top,  #FAE2E2 12%,  #F2CACB 81%); /* for ie10 */
-	background: linear-gradient(top,  #FAE2E2 12%,  #F2CACB 81%); /* for standards */
+	background: linear-gradient(to top,  #FAE2E2 12%,  #F2CACB 81%); /* for standards */
 
     border: 1px solid #EEB7BA;
     color: #BE4741;
@@ -267,7 +271,7 @@ textarea.notes {
 	background: -webkit-gradient(linear, left top, left bottom, from(#E5EDC4), to(#D9E4AC)); /* for webkit browsers */
 	background: -moz-linear-gradient(top,  #E5EDC4 12%,  #D9E4AC 81%); /* for firefox 3.6+ */
 	background: -ms-linear-gradient(top,  #E5EDC4 12%,  #D9E4AC 81%); /* for ie10 */
-	background: linear-gradient(top,  #E5EDC4 12%,  #D9E4AC 81%); /* for standards */
+	background: linear-gradient(to top,  #E5EDC4 12%,  #D9E4AC 81%); /* for standards */
 
     border: 1px solid #B8C97B;
     color: #3F7227;
@@ -279,7 +283,7 @@ textarea.notes {
 	background: -webkit-gradient(linear, left top, left bottom, from(#F9EE9C), to(#FFFFC0)); /* for webkit browsers */
 	background: -moz-linear-gradient(top,  #F9EE9C 12%,  #FFFFC0 81%); /* for firefox 3.6+ */
 	background: -ms-linear-gradient(top,  #F9EE9C 12%,  #FFFFC0 81%); /* for ie10 */
-	background: linear-gradient(top,  #F9EE9C 12%,  #FFFFC0 81%); /* for standards */
+	background: linear-gradient(to top,  #F9EE9C 12%,  #FFFFC0 81%); /* for standards */
 
     border: 1px solid #E5DBAA;
     color: #6D7829;
